@@ -96,8 +96,10 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
 
         if (mWantToLeftMove) {
             wantToLeftMove();
+//            wantToRightMove();
         } else {
             wantToRightMove();
+//            wantToLeftMove();
         }
 
         mPath.moveTo(mBottomPoint.x, mBottomPoint.y);
@@ -146,8 +148,8 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
             toLeftModel1(mOffset);
         }
 
-        float offset = mMaxLength * (1 - mOffset - 0.2f);
-        offset = offset > 0 ? -offset : 0;
+        float offset = mMaxLength * (-mOffset + 0.8f);
+        offset = offset > 0 ? mMaxLength - offset : mMaxLength;
         mTopPoint.adjustAllX(offset);
         mBottomPoint.adjustAllX(offset);
         mLeftPoint.adjustAllX(offset);
@@ -244,16 +246,11 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
     }
 
     private void toLeftModel5(float offset) {//0.1~0.0
-        float tmp = offset;
         toLeftModel4(0.1f);
         offset = 1 - offset;
         offset = offset - 0.9f;
         mRightPoint.adjustAllX(-(float) (Math.sin(Math.PI * offset * 10f) * (2 / 10f * mRadius)));
 
-        //移动速度太快 offset不会＝0；
-        if (tmp == 0f) {
-            mCenterX = (int) (mWidth / mPositionCount / 2 + (mLastPosition) * mMaxLength);
-        }
     }
 
     @Override
@@ -341,6 +338,10 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
             if (position > mLastPosition) {
 //                mOffset = 1.0f;
                 mWantToLeftMove = false;
+                mCenterX = (int) (mWidth / mPositionCount / 2 + position * mMaxLength);
+            }
+            if (position < mLastPosition) {
+                mCenterX = (int) (mWidth / mPositionCount / 2 + position * mMaxLength);
             }
         }
 
