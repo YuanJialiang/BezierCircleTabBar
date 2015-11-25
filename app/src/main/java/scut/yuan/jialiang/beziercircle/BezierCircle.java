@@ -20,10 +20,22 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
 
     private Paint mPaint;
     private Path mPath;
+    /**
+     * View的高度
+     * */
     private float mHeight;
+    /**
+     * View的宽度
+     * */
     private float mWidth;
+    /**
+     * 当前圆的起始点
+     * */
     private float mCenterX;
     private float mCenterY;
+    /**
+     * 圆的半径
+     * */
     private float mRadius;
     private float mC;
     private float mCDistance;
@@ -31,13 +43,38 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
      * 移动的最长距离
      */
     private float mMaxLength;
+    /**
+     * 膨胀的距离
+     * */
     private float mStretchDistance;
+    /**
+     * 圆上下左右四个点
+     * */
     private VerticalPoint mLeftPoint, mRightPoint;
     private HorizontalPoint mTopPoint, mBottomPoint;
+    /**
+     * 有多少个点
+     * */
     private int mPositionCount;
+    /**
+     * 页面偏移量
+     * */
     private float mOffset;
+    /**
+     * 圆在变动时在X上的移动距离
+     * */
+    private float mMoveOffset;
+    /**
+     * 是否想要向左移动
+     * */
     private boolean mWantToLeftMove;
+    /**
+     * 是否想改变方向
+     * */
     private boolean mChangeOrientation;
+    /**
+     * 上个点
+     * */
     private int mLastPosition;
 
 
@@ -83,6 +120,7 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
         mRadius = 50;
         mC = mRadius * C_RATE;
         mMaxLength = mWidth / mPositionCount;
+        mMoveOffset = mStretchDistance / 2 * 0.6f * (10f / 3);
         mStretchDistance = mRadius;
         mCDistance = mC * 0.45f;
     }
@@ -96,10 +134,8 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
 
         if (mWantToLeftMove) {
             wantToLeftMove();
-//            wantToRightMove();
         } else {
             wantToRightMove();
-//            wantToLeftMove();
         }
 
         mPath.moveTo(mBottomPoint.x, mBottomPoint.y);
@@ -126,7 +162,7 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
             toRightModel5(mOffset);
         }
 
-        float offset = mMaxLength * (mOffset - 0.2f);
+        float offset = (mMaxLength - mMoveOffset) / 0.8f * (mOffset - 0.2f);
         offset = offset > 0 ? offset : 0;
         mTopPoint.adjustAllX(offset);
         mBottomPoint.adjustAllX(offset);
@@ -148,7 +184,7 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
             toLeftModel1(mOffset);
         }
 
-        float offset = mMaxLength * (-mOffset + 0.8f);
+        float offset = (mMaxLength - mMoveOffset) / 0.8f * (-mOffset + 0.8f);
         offset = offset > 0 ? mMaxLength - offset : mMaxLength;
         mTopPoint.adjustAllX(offset);
         mBottomPoint.adjustAllX(offset);
@@ -268,7 +304,7 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
     public void onPageScrollStateChanged(int state) {
 //        Log.e("onPageScrollStateChanged", "state:" + state);
         if (state == 1) {
-            setOrientation();
+            mChangeOrientation = true;
         }
     }
 
@@ -318,6 +354,7 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
     public void setOffset(float offset, int position) {
         mOffset = offset;
 
+        // 判断向左还是向右
         if (mChangeOrientation) {
             mChangeOrientation = false;
             if (position < mLastPosition) {
@@ -326,31 +363,34 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
                 mWantToLeftMove = false;
             }
         }
+
+        // 向右
         if (!mWantToLeftMove) {
+            // 到达终点
             if (position > mLastPosition) {
-                mCenterX = (int) (mWidth / mPositionCount / 2 + position * mMaxLength);
+                mCenterX = mWidth / mPositionCount / 2 + position * mMaxLength;
             }
+            // 小于起点
             if (position < mLastPosition) {
                 mWantToLeftMove = true;
             }
         }
+        // 向左
         if (mWantToLeftMove) {
+            // 大于起点
             if (position > mLastPosition) {
 //                mOffset = 1.0f;
                 mWantToLeftMove = false;
-                mCenterX = (int) (mWidth / mPositionCount / 2 + position * mMaxLength);
+                mCenterX = mWidth / mPositionCount / 2 + position * mMaxLength;
             }
+            //小于起点
             if (position < mLastPosition) {
-                mCenterX = (int) (mWidth / mPositionCount / 2 + position * mMaxLength);
+                mCenterX = mWidth / mPositionCount / 2 + position * mMaxLength;
             }
         }
 
         mLastPosition = position;
         invalidate();
-    }
-
-    public void setOrientation() {
-        mChangeOrientation = true;
     }
 
     public void setViewPager(ViewPager viewPager) {
