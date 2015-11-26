@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -20,6 +21,7 @@ public class TabbarLayout extends ViewGroup {
     private BezierCircle mBezierCircle;
     private Context mContext;
     private int mRadius;
+    private ViewPager mViewPager;
 
     public TabbarLayout(Context context) {
         this(context, null);
@@ -87,6 +89,7 @@ public class TabbarLayout extends ViewGroup {
 
     public void setViewPager(ViewPager viewPager) {
         mBezierCircle.setViewPager(viewPager);
+        mViewPager = viewPager;
     }
 
     public void setImageResource(int[] resource){
@@ -94,11 +97,19 @@ public class TabbarLayout extends ViewGroup {
         mBezierCircle.setPositionCount(size);
 
         for (int i = 0; i < size; i ++){
+            final int position = i;
             ImageView imageView = new ImageView(mContext);
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setImageBitmap(getBitmap(mRadius,resource[i]));
 
             addView(imageView);
+
+            imageView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mViewPager.setCurrentItem(position, true);
+                }
+            });
         }
 
     }
