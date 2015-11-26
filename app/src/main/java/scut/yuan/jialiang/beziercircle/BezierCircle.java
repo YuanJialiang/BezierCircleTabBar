@@ -1,6 +1,7 @@
 package scut.yuan.jialiang.beziercircle;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +10,7 @@ import android.graphics.PointF;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 
 /**
@@ -89,6 +91,21 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
     public BezierCircle(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TabbarLayout);
+        int n = typedArray.getIndexCount();
+
+        for (int i = 0; i < n; i ++){
+            int attr = typedArray.getIndex(i);
+            switch (attr){
+                case R.styleable.TabbarLayout_radius:
+                    mRadius = (int) typedArray.getDimension(attr, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+                    break;
+            }
+        }
+
+        typedArray.recycle();
+
+
         //TODO:初始化操作
         init();
     }
@@ -106,7 +123,7 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
         mTopPoint = new HorizontalPoint();
         mBottomPoint = new HorizontalPoint();
 
-        mPositionCount = 3;
+//        mPositionCount = 3;
     }
 
     @Override
@@ -117,11 +134,11 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
         mCenterX = mWidth / mPositionCount / 2;
         mCenterY = mHeight / 2;
 
-        mRadius = 50;
+//        mRadius = 50;
         mC = mRadius * C_RATE;
         mMaxLength = mWidth / mPositionCount;
-        mMoveOffset = mStretchDistance / 2 * 0.6f * (10f / 3);
         mStretchDistance = mRadius;
+        mMoveOffset = mStretchDistance / 2 * 0.6f * (10f / 3);
         mCDistance = mC * 0.45f;
     }
 
@@ -395,6 +412,10 @@ public class BezierCircle extends View implements ViewPager.OnPageChangeListener
 
     public void setViewPager(ViewPager viewPager) {
         viewPager.addOnPageChangeListener(this);
+    }
+
+    public void setPositionCount(int positionCount){
+        mPositionCount = positionCount;
     }
 
 }

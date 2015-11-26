@@ -18,7 +18,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
-    private BezierCircle mBezierCircle;
+    private TabbarLayout mBezierCircle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mBezierCircle = (BezierCircle) findViewById(R.id.circle);
+        mBezierCircle = (TabbarLayout) findViewById(R.id.circle);
+        mBezierCircle.setImageResource(new int[]{R.mipmap.message1, R.mipmap.setting, R.mipmap.ic_launcher});
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mViewPager.setAdapter(new MyViewPagerAdapter(getSupportFragmentManager()));
         mBezierCircle.setViewPager(mViewPager);

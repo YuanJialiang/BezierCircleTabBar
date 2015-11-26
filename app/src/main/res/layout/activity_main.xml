@@ -35,8 +35,10 @@
             android:layout_weight="1"
             android:layout_height="0dp"/>
 
-        <scut.yuan.jialiang.beziercircle.BezierCircle
+        <scut.yuan.jialiang.beziercircle.TabbarLayout
             android:id="@+id/circle"
+            app:radius="30dp"
+            android:background="#32486c"
             android:layout_width="match_parent"
             android:layout_height="80dp"/>
 
